@@ -1,0 +1,75 @@
+#!/usr/bin/env python3
+
+import asyncio
+from bleak import BleakClient
+import mysql.connector
+
+# BLE-laitteen tiedot
+DEVICE_ADDRESS = #nordicin MAC
+CHARACTERISTIC_UUID = "00001523-1212-efde-1523-785feabcd123"
+RASPB_ADDRESS="" #Tänne Raspin mac osoite
+
+# MySQL-yhteys
+def get_db_connection():
+    return mysql.connector.connect(
+        host="",
+        user="",
+        password="",
+        database=""
+    )
+
+
+async def main():
+    try:
+        async with BleakClient(DEVICE_ADDRESS) as client:
+            print(" Yhdistetty Nordicin BLE-laitteeseen")
+
+            db = get_db_connection()
+            cursor = db.cursor()
+
+            # Callback datan vastaanottoon
+            def handle_data(sender, data):
+                try:
+                    asciidata = data.decode("utf-8").strip()
+                    print(f" Vastaanotettu data: {asciidata}")
+                except Exception:
+                    print(" Datan dekoodaus epäonnistui")
+                    return
+
+                # Lähetetään MySQL:ään
+                try:
+                    parts = asciidata.split(":")
+                    if len(parts) < 4:
+                        print(f" Virheellinen dataformaatti: {asciidata}")
+                        return
+
+                    direction = float(parts[0])
+                    x = float(parts[1])
+                    y = float(parts[2])
+                    z = float(parts[3])
+
+                    sql = """INSERT INTO rawdata
+                             (from_mac, to_mac, sensorvalue_a, sensorvalue_b, sensorvalue_c, sensorvalue_d, sensorvalue_f)
+                             VALUES (%s, %s, %s, %s, %s, %s, %s)"""
+                    cursor.execute(sql, (DEVICE_ADDRESS, RASPB_ADDRESS, direction, x, y, z, asciidata))
+                    db.commit()
+
+                    print(f" Tallennettu: suunta={direction}, x={x}, y={y}, z={z}")
+                except mysql.connector.Error as err:
+                    print(f" MySQL-virhe: {err}")
+
+            # Aloita ilmoitusten kuuntelu
+            await client.start_notify(CHARACTERISTIC_UUID, handle_data)
+            print(" Kuunnellaan BLE-dataa 30 sekuntia...")
+            await asyncio.sleep(30)
+            await client.stop_notify(CHARACTERISTIC_UUID)
+            print(" Kuuntelu lopetettu")
+
+            cursor.close()
+            db.close()
+
+    except Exception as e:
+        print(f" Virhe BLE-yhteydessä: {e}")
+
+asyncio.run(main())
+
