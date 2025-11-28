@@ -21,10 +21,10 @@ y_data = data[:,3]
 x_data = data[:,0:3]
 N=600
 
-kp=np.zeros((6,3))
+kp=np.zeros((6,3),dtype=int)
 for i in range(6):
     kp[i,:]=random_xyz()
-    print(random_xyz())
+    #print(random_xyz())
     
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
@@ -50,12 +50,38 @@ for step in range(5):
         else:
             kp[k,:]=random_xyz()
 
-print(kp[:])
-np.max(kp,axis=0)
-np.min(kp,axis=0)
+#print(kp[:])
+
+x_max=np.max(kp[:,0],axis=0,)
+y_max=np.max(kp[:,1],axis=0,)
+z_max=np.max(kp[:,2],axis=0,)
+#print("Maximit",x_max,y_max,z_max)
+x_min=np.min(kp[:,0],axis=0)
+y_min= np.min(kp[:,1],axis=0)
+z_min= np.min(kp[:,2],axis=0)
+#print("minimit:",x_min,y_min,z_min)
+
+CP_sorted = np.zeros((6,3),dtype=int)
+CP_sorted[0] = [x_min, 0, 0]
+CP_sorted[1] = [x_max, 0, 0]
+CP_sorted[2] = [0, y_min, 0]
+CP_sorted[3] = [0, y_max, 0]
+CP_sorted[4] = [0, 0, z_min]
+CP_sorted[5] = [0, 0, z_max]
+print (CP_sorted)
 print("maximit",np.max(kp,axis=0))
 print("minimit",np.min(kp,axis=0))
 
+
+#Tällä luodaan keskipisteet.h tiedosto
+with open("keskipisteet.h","w") as f:
+    f.write(f"int CP[{CP_sorted.shape[0]}][{CP_sorted.shape[1]}] = {{\n")
+
+    for row in CP_sorted:
+        f.write("    {" + ", ".join(map(str, row)) + "},\n")
+
+    f.write("};\n")
+print("Keskipisteet.h tiedosto luotu")
 
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
