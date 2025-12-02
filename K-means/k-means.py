@@ -1,12 +1,22 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
+
+#data=pd.read_csv("db_output.csv", sep=";") #sensor_data.csv
+data=pd.read_csv("sensor_data.csv", sep=";")
+print(data.columns.tolist())
+data.columns = data.columns.str.strip("'")
+#data_values=data[["sensorvalue_a","sensorvalue_b","sensorvalue_c","sensorvalue_d"]].to_numpy()#["Orientation", "X","Y","Z"]].to_numpy()
+data_values=data[["Orientation", "X","Y","Z"]].to_numpy()
+data_values=data_values.astype(int)
+print(data_values)
 
 def random_xyz():
     x= np.random.randint(1200,1800)
     y= np.random.randint(1200,1800)
     z=np.random.randint(1200,1800)
     return x,y,z
-
+'''
 data = np.zeros((600,4))
 data[0:100,:] = np.array([1800,1500,1500,0])
 data[100:200,:] = np.array([1200,1500,1500,1])
@@ -15,17 +25,19 @@ data[300:400,:] = np.array([1500,1200,1500,3])
 data[400:500,:] = np.array([1500,1500,1800,4])
 data[500:600,:] = np.array([1500,1500,1200,5])
 data[:,0:3] = data[:,0:3] + 70*np.random.rand(600, 3)
+'''
 
-y_data = data[:,3]
+y_data = data_values[:,0]
 
-x_data = data[:,0:3]
-N=600
+
+x_data = data_values[:,1:4]
+N=len(data_values)
 
 kp=np.zeros((6,3),dtype=int)
 for i in range(6):
     kp[i,:]=random_xyz()
     #print(random_xyz())
-    
+   
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 ax.scatter(x_data[:,0],x_data[:,1], x_data[:,2],color="pink")
