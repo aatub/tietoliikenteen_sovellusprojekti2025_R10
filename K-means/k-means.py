@@ -2,12 +2,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
-#data=pd.read_csv("db_output.csv", sep=";") #sensor_data.csv
-data=pd.read_csv("sensor_data.csv", sep=";")
+data=pd.read_csv("db_output.csv", sep=";") #sensor_data.csv
+#data=pd.read_csv("sensor_data.csv", sep=";")
 print(data.columns.tolist())
 data.columns = data.columns.str.strip("'")
-#data_values=data[["sensorvalue_a","sensorvalue_b","sensorvalue_c","sensorvalue_d"]].to_numpy()#["Orientation", "X","Y","Z"]].to_numpy()
-data_values=data[["Orientation", "X","Y","Z"]].to_numpy()
+data_values=data[["sensorvalue_a","sensorvalue_b","sensorvalue_c","sensorvalue_d"]].to_numpy()#["Orientation", "X","Y","Z"]].to_numpy()
+#data_values=data[["Orientation", "X","Y","Z"]].to_numpy()
 data_values=data_values.astype(int)
 print(data_values)
 
