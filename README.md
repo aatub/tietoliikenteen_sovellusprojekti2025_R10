@@ -1,14 +1,14 @@
 # Tietoliikenteen sovellusprojekti 2025
 
-Tämän projektin tavoitteena oli toteuttaa IoT-järjestelmä, jossa kiihtyvyysanturi mittaa kolmiakselista dataa ja välittää sen Bluetooth Low Energy (BLE) -yhteyden kautta Raspberry Pi 3 :lla olevalle linux palvelimelle. Raspberry Pi tallentaa datan tietokantapalvelimelle, josta se on hyödynnettävissä sekä ohjelmallisesti että HTTP-käyttöliittymän kautta.
+Tämän projektin tavoitteena oli toteuttaa IoT-järjestelmä, jossa kolmeakselinen kiihtyvyysanturi mittaa liikettä ja välittää mittausdatan Bluetooth Low Energy (BLE) -yhteyden kautta Raspberry Pi 3 :lla olevalle linux palvelimelle. Raspberry Pi tallentaa datan tietokantapalvelimelle, josta se on hyödynnettävissä sekä ohjelmallisesti että HTTP-käyttöliittymän kautta.
 
-Tallennetun datan pohjalta ohjelmoidaan ML malli, joka tunnistaa kiihtyvyysanturin suunnan.
+Tallennetun datan pohjalta rakennettiin  K-means ML malli, joka tunnistaa kiihtyvyysanturin suunnan mittausdatan perusteella.
 
 Nordic-alusta (nRF5340 DK)
 -	Anturi mittaa kiihtyvyyttä X, Y ja Z -akseleissa.
 -	Data lähetetään eteenpäin BLE:n avulla.
 -	Muodostetaan yhteys Raspberry Pi 3:n joka lukee arvot
-
+  
 Raspberry Pi 3
 -	Toimii BLE-clientinä.
 -	Vastaanottaa Nordicilta tulevan datan.
